@@ -17,16 +17,32 @@ class Program
 
         if (File.Exists(filePath))
         {
-            if (IsSQLiteDatabase(filePath))
-                Console.WriteLine("The file is a valid SQLite database.");
-            else
-                Console.WriteLine("The file is NOT a SQLite database.");
+           var isHeaderValid = IsSQLiteDatabase(filePath);
+           if (!isHeaderValid){
+              Console.WriteLine("The file header is incorrect. Not a valid sqlite db or file is corrupt.");
+              return;
+           }
+           Console.WriteLine("Sqlite header found.  Possible sqlite db.");
+           var isDbIntegrity = CheckDatabaseIntegrity(filePath);
+           if (!isDbIntegrity){
+              Console.WriteLine("File header seems right, but database may be corrupt. Integrity check failed.");
+              return;
+           }
+           Console.WriteLine("File integrity check succeeded.");
+           Console.WriteLine("The file seems to be a valid SQLite database.");
         }
         else
         {
             Console.WriteLine("File not found.");
         }
     }
+
+   static bool CheckDatabaseIntegrity(string filePath){
+      // we can check that the size of the file 
+      // is evenly divisible by 4096 (page size)
+      long fileSize = new FileInfo(filePath).Length;
+      return fileSize % 4096 == 0;
+   }
 
     static bool IsSQLiteDatabase(string filePath)
     {
