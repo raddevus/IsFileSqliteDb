@@ -48,7 +48,7 @@ class Program
     {
         byte[] expectedHeader = Encoding.ASCII.GetBytes("SQLite format 3\0");
 
-        using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+        using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
         {
             byte[] headerBytes = new byte[expectedHeader.Length];
             fs.Read(headerBytes, 0, expectedHeader.Length);
